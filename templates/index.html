@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Health Calculator</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+    h1, h2 { color: #333; }
+    input, select { padding: 0.5rem; margin: 0.5rem 0; width: 100%; box-sizing: border-box; }
+    button { padding: 0.5rem 1rem; margin-top: 0.5rem; }
+    section { margin-bottom: 2rem; }
+    p.result { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Health Calculator</h1>
+
+  <section id="bmi-section">
+    <h2>BMI Calculator</h2>
+    <label>Height (meters):</label>
+    <input id="bmi-height" type="number" step="0.01" placeholder="e.g. 1.75" />
+    <label>Weight (kg):</label>
+    <input id="bmi-weight" type="number" step="0.1" placeholder="e.g. 70" />
+    <button onclick="calculateBMI()">Calculate BMI</button>
+    <p id="bmi-result" class="result"></p>
+  </section>
+
+  <section id="bmr-section">
+    <h2>BMR Calculator</h2>
+    <label>Height (cm):</label>
+    <input id="bmr-height" type="number" step="1" placeholder="e.g. 175" />
+    <label>Weight (kg):</label>
+    <input id="bmr-weight" type="number" step="0.1" placeholder="e.g. 70" />
+    <label>Age (years):</label>
+    <input id="bmr-age" type="number" step="1" placeholder="e.g. 30" />
+    <label>Gender:</label>
+    <select id="bmr-gender">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+    <button onclick="calculateBMR()">Calculate BMR</button>
+    <p id="bmr-result" class="result"></p>
+  </section>
+
+  <script>
+    async function calculateBMI() {
+      const height = parseFloat(document.getElementById('bmi-height').value);
+      const weight = parseFloat(document.getElementById('bmi-weight').value);
+      const res = await fetch('/bmi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ height, weight })
+      });
+      const data = await res.json();
+      document.getElementById('bmi-result').textContent = res.ok
+        ? `Your BMI is ${data.bmi}`
+        : `Error: ${data.error}`;
+    }
+
+    async function calculateBMR() {
+      const height = parseFloat(document.getElementById('bmr-height').value);
+      const weight = parseFloat(document.getElementById('bmr-weight').value);
+      const age    = parseInt(document.getElementById('bmr-age').value);
+      const gender = document.getElementById('bmr-gender').value;
+      const res = await fetch('/bmr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ height, weight, age, gender })
+      });
+      const data = await res.json();
+      document.getElementById('bmr-result').textContent = res.ok
+        ? `Your BMR is ${data.bmr}`
+        : `Error: ${data.error}`;
+    }
+  </script>
+</body>
+</html>

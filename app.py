@@ -1,7 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from health_utils import calculate_bmi, calculate_bmr
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
+
+@app.route('/', methods=['GET'])
+def home():
+    # Serves the web interface
+    return render_template('index.html')
 
 @app.route('/bmi', methods=['POST'])
 def bmi():
