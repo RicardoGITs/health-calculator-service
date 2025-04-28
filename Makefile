@@ -6,8 +6,9 @@ init:
 run:
 	python app.py
 
+# Ensure project root is on PYTHONPATH so pytest can import local modules
 test:
-	pytest --maxfail=1 --disable-warnings -q
+	PYTHONPATH=$(PWD) pytest --maxfail=1 --disable-warnings -q
 
 build:
 	docker build -t health-calculator-service .
